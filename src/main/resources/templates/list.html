@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>GPIO host</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+<!--===============================================================================================-->	
+	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/vendor/perfect-scrollbar/perfect-scrollbar.css">
+<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/static/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/static/css/main.css">
+<!--===============================================================================================-->
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-table100">
+			<div class="wrap-table100">
+				<div class="table100">
+					<table>
+						<thead>
+							<tr class="table100-head">
+								<th class="column1">GPIO</th>
+								<th class="column2">Direction</th>
+								<th class="column3">Status</th>
+								<th class="column6">Action</th>
+							</tr>
+						</thead>
+						   <tbody>
+							    <tr th:if="${list.empty}">
+						            <td colspan="4"> No Info Available </td>
+						        </tr>
+						        <tr th:each="entry: ${list}">
+						            <td class="column1"><span th:text="${entry.name}"> Title </span></td>
+						            <td class="column2"><span th:text="${entry.direction}"> Author </span></td>
+						            <td class="column3"><span th:text="${entry.value}"> Author </span></td>
+									<td class="column6" th:if="${T(smarthome.utils.SearchCriteria).showSelection(entry.direction)}">
+										<select onchange="test(this)" th:id="${entry.name}">
+										    <option th:each="option : ${stateList}"
+										            th:value="${option}"
+										            th:text="${option}"
+										            th:selected="${T(smarthome.utils.SearchCriteria).isSelected(option, entry.value)}">
+										    </option>
+										</select>
+									</td>
+									<td class="column6" th:unless="${T(smarthome.utils.SearchCriteria).showSelection(entry.direction)}">
+									</td>
+						        </tr>
+						    </tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function test(a) {
+			var id = a.id;
+			var value = a.options[a.selectedIndex].value;	
+			console.log(id)
+			console.log(value)
+		    var url = '/io/switchcontrol?switch='+id+'&control='+value;
+		    $.ajax({
+		      url: url,
+		      type: 'GET',
+		      datatype: 'json'
+		    });
+		}
+	</script>
+
+	<script>
+	function switchControl(switchTermialNo, onOff) {
+	    var url = '/io/switchcontrol?switch='+switchTermialNo+'&control='+onOff;
+	    $.ajax({
+	      url: url,
+	      type: 'GET',
+	      datatype: 'json',
+	      success: function(response) { $("#subViewDiv").html( response ); },
+	      error: function() { $("#subViewDiv").html( 'error occured' ); }
+	    });
+	}
+	</script>
+
+<!--===============================================================================================-->	
+	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/vendor/bootstrap/js/popper.js"></script>
+	<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/vendor/select2/select2.min.js"></script>
+<!--===============================================================================================-->
+	<script src="/static/js/main.js"></script>
+
+</body>
+</html>
